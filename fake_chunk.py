@@ -101,7 +101,7 @@ def demo():
 	print "Leaked Fd Ptr: ", hex(leaked_ptr)
 
 	print "Converting leaked Fd ptr..."
-	ptr, loc = recover_pointers(leaked_ptr,offset=0x0,loc_final_bits=0x300)
+	ptr, loc = recover_ptrs(leaked_ptr,offset=0x0,loc_final_bits=0x300)
 	print "Recovered Fd Ptr: ", hex(ptr)
 	print "Location:", hex(loc)
 	print "\n"

@@ -64,7 +64,7 @@ Returns:
 Ptr: The pointer than is being stored 
 Location: The location where the pointer is being stored.
 '''
-def recover_pointers(mangled_ptr, offset=0x0, loc_final_bits=0x0):
+def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 	
 	# Need to iterate in 4-bit intervals. This gets the amount of total bits that we need to act on.
 	count = 0x0 	
@@ -156,7 +156,7 @@ def showcase():
 
 	print "\n\nUnmangle the Pointers with Magic"
 	print "=================================="
-	fixed_ptr, fixed_loc = recover_pointers(leaked_ptr, 0x0, loc & 0xFFF)
+	fixed_ptr, fixed_loc = recover_ptrs(leaked_ptr, 0x0, loc & 0xFFF)
 	print "Found Pointer: ", hex(ptr)
 	print "Found Location: ", hex(loc)
 

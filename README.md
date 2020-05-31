@@ -1,14 +1,11 @@
 # Mangle
 
 ## Overview 
-This repository is for understanding and using GLibC 2.32  
-with the pointer mangling that has been added.   
-These new security mitigations make exploitation harder  
-but not impossible. For details on the mangling and   
+This repository is for understanding and using GLibC 2.32 with the pointer mangling that has been added.   
+These new security mitigations make exploitation harder but not impossible. For details on the mangling and   
 alignment fixes, check out: https://research.checkpoint.com/2020/safe-linking-eliminating-a-20-year-old-malloc-exploit-primitive/  
   
-For a write up explaining the implications of these  
-patches, please visit TODO
+For a write up explaining the implications of these patches, please visit TODO.
 
 ## Files 
 - mangle.py: 
@@ -49,7 +46,7 @@ python mangle.py encode_ptr 0x987654321 0x987654987
 
 ## Function Usage 
 The usage of the functions is described above (from the CLI docs). 
-This is also documentation on the functions itself.
+There is also documentation on the functions itself within the `mangle.py` file. 
 
 To import the functions (with a file in the same directory as mangle.py), just use 
 ```

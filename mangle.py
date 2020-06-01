@@ -67,6 +67,12 @@ Location: The location where the pointer is being stored.
 def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 	
 	# Need to iterate in 4-bit intervals. This gets the amount of total bits that we need to act on.
+	if(offset > 0):
+		addition = True 
+	else: 
+		offset = offset * -1
+		addition = False
+
 	count = 0x0 	
 	tmp_value = mangled_ptr
 	while(tmp_value & 0xFFFFFF000 != 0x0):
@@ -95,20 +101,21 @@ def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 		
 		# Add the new known_bits to the total for the ptr.	
 		new_bits = (known_bits << (ptr_count * 4))
-		
+	
+		print "New Bits: ", hex(new_bits)	
+		print "Offset: ", hex(tmp_offset)
 		# The 'known_bits' are the location in which the ptr was stored at that we are getting.
-		final_location += new_bits
+		final_ptr = final_ptr + new_bits
 
-		''' 
-		The value for new_bits is actually calculating the 
-		value of the bits for the storage location (not the ptr).
+		if(addition == True):
+			final_location = final_location + new_bits + tmp_offset
+			known_bits = __shift_to_end(new_bits + tmp_offset)[0]
+			
+		else: 
+			final_location = final_location + new_bits - tmp_offset
+			known_bits = __shift_to_end(new_bits - tmp_offset)[0]
 
-		However, because this is SO close to the heap pointer, 
-		we can just use it. Or, if necessary, add the offset
-		between the two in order to get the heap pointer bits.
-		'''
-		final_ptr = final_ptr + new_bits + tmp_offset
-
+		print "Bits Final: ", hex(known_bits)
 		# Remove the top-most three bits that were just operated on form the value.
 		mangled_ptr = __remove_first_three_bytes(mangled_ptr, ptr_count + 3)
 

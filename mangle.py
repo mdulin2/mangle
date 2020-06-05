@@ -5,14 +5,19 @@ These are meant to handle the pointer mangling features that were introducted in
 '''
 
 import fire 
+import sys 
 
 # Mangle the ptr
-def encode_ptr(fd_ptr, storage_location):
+def encode_ptr(fd_ptr, storage_location, print_hex=False):
+	if(print_hex):
+		return hex((storage_location >> 12) ^ fd_ptr)	
 	return (storage_location >> 12) ^ fd_ptr
 
 
 # Demangle the ptr
-def decode_ptr(mangled_ptr,storage_location):
+def decode_ptr(mangled_ptr,storage_location, print_hex=False):
+	if(print_hex):
+		return hex((storage_location >> 12) ^ mangled_ptr)
 	return (storage_location >> 12) ^ mangled_ptr
 
 
@@ -27,6 +32,7 @@ Two features make this possible to predict:
 
 By using the following equation, we can determine the value 
 and location of the ptr. 
+The equation makes ONE assumption: the first 12 (most significant) bits of the address are the same.
 
 
 Equation
@@ -41,11 +47,11 @@ This outputs the value of the 12 bits of the Fd Pointer.
 
 3. Finally, if the value of the bits of the Fd Pointer and the 
 Storage Location are not the same (which is possible) we can just 
-subtract or add this bits back in (if not the same set of bits) on the Fd Pointer.
+subtract or add this bits back in (if not the same set of bits) on the Location Pointer (for the next round).
 
 4. Repeat until we are at the end of the program. 
-The 'known bits' are the bits outputted in step 2 for the 
-next iteration.
+The 'known bits' are the bits outputted in step 2 for the
+next iteration
 
 
 Parameters: 
@@ -64,7 +70,7 @@ Returns:
 Ptr: The pointer than is being stored 
 Location: The location where the pointer is being stored.
 '''
-def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
+def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0, print_hex=False):
 	
 	# Need to iterate in 4-bit intervals. This gets the amount of total bits that we need to act on.
 	if(offset > 0):
@@ -102,8 +108,6 @@ def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 		# Add the new known_bits to the total for the ptr.	
 		new_bits = (known_bits << (ptr_count * 4))
 	
-		print "New Bits: ", hex(new_bits)	
-		print "Offset: ", hex(tmp_offset)
 		# The 'known_bits' are the location in which the ptr was stored at that we are getting.
 		final_ptr = final_ptr + new_bits
 
@@ -115,7 +119,6 @@ def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 			final_location = final_location + new_bits - tmp_offset
 			known_bits = __shift_to_end(new_bits - tmp_offset)[0]
 
-		print "Bits Final: ", hex(known_bits)
 		# Remove the top-most three bits that were just operated on form the value.
 		mangled_ptr = __remove_first_three_bytes(mangled_ptr, ptr_count + 3)
 
@@ -127,6 +130,10 @@ def recover_ptrs(mangled_ptr, offset=0x0, loc_final_bits=0x0):
 	# If the final bits of the location are given, we add them back in.
 	if(loc_final_bits):
 		final_location += (loc_final_bits & 0xFFF)
+
+	if(print_hex):
+		final_ptr = hex(final_ptr) 
+		final_location = hex(final_location)
 	return final_ptr, final_location
 
 '''
@@ -148,6 +155,10 @@ def __shift_to_end(value):
 
 # Just an example
 def showcase():
+	print ""
+	print "Demo"
+	print "======================================"
+	print ""
 	ptr = 0x987654321
 	loc = 0x987654987
 	print "Starting Out"
@@ -161,12 +172,11 @@ def showcase():
 	print "Mangled Pointer: ", hex(leaked_ptr)
 	print "Demangle Pointer (manually): ", hex(decode_ptr(leaked_ptr,loc))
 
-	print "\n\nUnmangle the Pointers with Magic"
+	print "\n\nUnmangle the Pointers with Magic Algorithm"
 	print "=================================="
 	fixed_ptr, fixed_loc = recover_ptrs(leaked_ptr, 0x0, loc & 0xFFF)
 	print "Found Pointer: ", hex(ptr)
 	print "Found Location: ", hex(loc)
-
 
 if __name__ == "__main__":
 	fire.Fire()

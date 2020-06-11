@@ -7,7 +7,7 @@ alignment fixes, check out: https://research.checkpoint.com/2020/safe-linking-el
   
 What's in here? 
 - Pointer mangling and unmangling functions
-- **Decoder of mangled pointers**
+- Decoder of mangled pointers
 - LibC and Loader binary with Malloc that has pointer mangling implemented. 
 - Both functions and CLI for executions the above functionality 
 - Modified Malloc_Playground (how2heap style) that has a premade Python interface in order to make testing easier
@@ -39,7 +39,6 @@ There are only four functions in the file to use:
 	- storage_location: Takes in the *storage location* of the ptr
 - recover_ptr - Recovers the storage loc and fd ptr from a mangled ptr
 	- mangled_ptr: Takes in the currently mangled ptr 
-	- offset: Takes in the offset between mangled_ptr and the location
 	- loc_final_bits: Takes in the final 12 bits of the location ptr
 - showcase - Example usage of the functions
 
@@ -67,3 +66,6 @@ In the future, this type of stuff will need to be included in awesome debuggers 
 with GLibC 2.32 or greater.   
   
 For the time being, feel free to contribute to this repository to add better examples, more functionality, fix any bugs or anything else that you feel would be helpful!
+
+## Edits
+- My original implementation of the recover_ptrs function made a bad assumption with a parameter called *offsets*. Although it worked some of the time (depending on the new ptrs), it was consistent and not mathmatically sound. So, this was removed.

@@ -7,13 +7,13 @@ alignment fixes, check out: https://research.checkpoint.com/2020/safe-linking-el
   
 What's in here? 
 - Pointer mangling and unmangling functions
-- Decoder of mangled pointers
+- Decoder of mangled pointers (restricted)
 - LibC and Loader binary with Malloc that has pointer mangling implemented. 
 - Both functions and CLI for executions the above functionality 
 - Modified Malloc_Playground (how2heap style) that has a premade Python interface in order to make testing easier
 - Example usage of functions with working examples for memory corruption
 
-For a write up explaining the implications of these security mitigations and how they work, please visit TODO.
+For a write up explaining the implications of these security mitigations and how they work, please visit https://maxwelldulin.com/BlogPost?post=5445977088.
 
 ## Files 
 - mangle.py: 
@@ -63,7 +63,7 @@ from mangle import *
 ## Future 
 Overall, my main goal was to just write a blog post about this and include something for people to easily play with.  
 In the future, this type of stuff will need to be included in awesome debuggers (gef and pwndbg) and any type of pwn dealing  
-with GLibC 2.32 or greater.   
+with GLibC 2.32 or greater.  
   
 For the time being, feel free to contribute to this repository to add better examples, more functionality, fix any bugs or anything else that you feel would be helpful!
 
